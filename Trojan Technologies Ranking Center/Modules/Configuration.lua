@@ -14,7 +14,7 @@ cizzles
 local Configuration = {
 	--> MAIN CONFIG	URATION
 		--> MODE
-			Mode = "Custom",
+			Mode = "Default",
 			--> Type "Default" in between the parentheses if you want to only customize parameters that don't have "Default" in between the parentheses
 			--> Type "Custom" in between the parentheses if you want to customize all parameters
 			--> MORE [COMMUNITY-DESIGNED] MODES COMING SOON!
@@ -74,10 +74,8 @@ local Configuration = {
 								--> Set the Total Badges to the number of total badges you want a player to have before being ranked
 								--> You can find the Role ID (Rank ID) in the Group Admin "Roles" Tab
 				
-									{"Default", 1, 9750998};
-									{"Default", 1, 9751011};
-									{"Default", 1, 9751071};
-									{"Default", 1, 9751100};
+									{"Default", 0, 0};
+									{"Default", 0, 0};
 		
 							   	 	--> LIMIT = 20 RANKS <--
 			},
@@ -115,13 +113,13 @@ local Configuration = {
 	
 	--> OPTIONAL CONFIGURATION
 		--> UI CUSTOMIZATION
-			Theme = "Dark",
+			Theme = "Default",
 			--> If you want to have the Default (Light) theme enabled, type "Default" in between the parentheses
 			--> If you want to have Light theme enabled, type "Light" in between the parentheses
 			--> If you want to have Dark theme enabled, type "Dark" in between the parentheses
 		--> MORE [COMMUNITY-DESIGNED] THEMES COMING SOON!
 		
-			Color = "Hot pink",
+			Color = "Default",
 			--> If you want to have the Default (Trojan Main) color enabled, type "Default" in between the parentheses
 			--> You can replace "Default" with a Roblox Brick Color Name of your choice to change the main color of the game
 				--> Roblox Brick Color Names: https://developer.roblox.com/en-us/articles/BrickColor-Codes
@@ -214,7 +212,7 @@ local Configuration = {
 			--> If don't you have the Ranking Bot Add-On, type "Disabled" in between the parentheses
 	
 		--> LOGGING
-				--> USE THE LOGGING ADD-ON AT YOUR OWN RISK; YOU MAY HAVE YOUR SERVER, WORKSPACE, ACCOUNT, ETC. BE BANNED OR DELETED IF ABUSED!
+			--> USE THE LOGGING ADD-ON AT YOUR OWN RISK; YOU MAY HAVE YOUR SERVER, WORKSPACE, ACCOUNT, ETC. BE BANNED OR DELETED IF ABUSED!
 				Logging = "Default",
 				--> If you want to have the Default (Disabled) enabled, type "Default" in between the parentheses
 				--> If you have the Logging Add-On, type "Enabled" in between the parentheses
