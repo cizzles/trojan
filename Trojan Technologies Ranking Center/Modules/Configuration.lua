@@ -117,7 +117,7 @@ local Configuration = {
 			--> If you want to have the Default (Light) theme enabled, type "Default" in between the parentheses
 			--> If you want to have Light theme enabled, type "Light" in between the parentheses
 			--> If you want to have Dark theme enabled, type "Dark" in between the parentheses
-		--> MORE [COMMUNITY-DESIGNED] THEMES COMING SOON!
+				--> MORE [COMMUNITY-DESIGNED] THEMES COMING SOON!
 		
 			Color = "Default",
 			--> If you want to have the Default (Trojan Main) color enabled, type "Default" in between the parentheses
