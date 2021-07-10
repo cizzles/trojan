@@ -10,21 +10,28 @@ cizzles
 
 local Completed = false
 
-local GP = false
-local I = false
+local GamePasses = false
+local Assets = false
+local Bundles = false
+local Premium = false
 
 local TeleportService = game:GetService("TeleportService")
 local MarketplaceService = game:GetService("MarketplaceService")
-local ReplicatedFirst = game:GetService("ReplicatedFirst")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local MessagingService = game:GetService("MessagingService")
 local GroupService = game:GetService("GroupService")
 local UserService = game:GetService("UserService")
+local Players = game:GetService("Players")
+
+local ReplicatedFirst = game:GetService("ReplicatedFirst")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Config = require(ReplicatedStorage:WaitForChild("Configuration"))
 local Info = require(ReplicatedStorage:WaitForChild("Information"))
 
+local FundsEvent = ReplicatedStorage:WaitForChild("FundsEvent")
+
 local PlaceID = game.PlaceId
-local PlaceInfo = ReplicatedFirst:GetProductInfo(PlaceID)
+local PlaceInfo = MarketplaceService:GetProductInfo(PlaceID)
 
 if Config then
 	
@@ -44,12 +51,23 @@ if Config then
 	local Example = Background:WaitForChild("Example")
 	local StepThree = Background:WaitForChild("Step_3")
 	local StepFour = Background:WaitForChild("Step_4")
+	local Funds = Background:WaitForChild("Total_Funds_Raised")
 	
-	local GamePassTextBox = Background:WaitForChild("Game_Passes_Only"):WaitForChild("Enter_ID_Box")
-	local GamePassWarning = Background:WaitForChild("Game_Passes_Only"):WaitForChild("Warning")
-	local ItemTextBox = Background:WaitForChild("Items_Only"):WaitForChild("Enter_ID_Box")
-	local ItemWarning = Background:WaitForChild("Items_Only"):WaitForChild("Warning")
-
+	local GamePassFrame = Background:WaitForChild("Game_Passes")
+	local GamePassTextBox = GamePassFrame:WaitForChild("Enter_ID_Box")
+	local GamePassWarning = GamePassFrame:WaitForChild("Warning")
+	
+	local AssetFrame = Background:WaitForChild("Assets")
+	local AssetTextBox = AssetFrame:WaitForChild("Enter_ID_Box")
+	local AssetWarning = AssetFrame:WaitForChild("Warning")
+	
+	local BundleFrame = Background:WaitForChild("Bundles")
+	local BundleTextBox = BundleFrame:WaitForChild("Enter_ID_Box")
+	local BundleWarning = BundleFrame:WaitForChild("Warning")
+	
+	local PremiumFrame = Background:WaitForChild("Premium")
+	local PremiumTextButton = PremiumFrame:WaitForChild("Buy_Premium")
+	
 	if PlaceInfo.Creator.CreatorType == "Group" then
 		local Group = GroupService:GetGroupInfoAsync(PlaceInfo.Creator.CreatorTargetId)
 		Title.Text = string.format("SUPPORT %s", string.upper(Group.Name))
@@ -70,8 +88,12 @@ if Config then
 		HowTo.Font = newFont
 		GamePassTextBox.Font = newFont
 		GamePassWarning.Font = newFont
-		ItemTextBox.Font = newFont
-		ItemWarning.Font = newFont
+		AssetTextBox.Font = newFont
+		AssetWarning.Font = newFont
+		BundleTextBox.Font = newFont
+		BundleWarning.Font = newFont
+		PremiumTextButton.Font = newFont
+		Funds.Font = newFont
 	end
 	
 	if SecondaryFont ~= "Default" then
@@ -96,6 +118,7 @@ if Config then
 				StepOne.TextColor3 = Color3.fromRGB(255, 255, 255)
 				StepTwo.TextColor3 = Color3.fromRGB(255, 255, 255)
 				StepThree.TextColor3 = Color3.fromRGB(255, 255, 255)
+				Funds.TextColor3 = Color3.fromRGB(255, 255, 255)
 			end
 		end
 	elseif Mode == "Default" or Theme == "Light" then
@@ -109,13 +132,20 @@ if Config then
 	local Package = Info.Package
 	local AddOns = Info.AddOns
 	
-		if Package == 1127843431 then
-			GP = true	
-		elseif Package == 1127843735 then	
-			I = true
+		if Package == 1127843735 then	
+			Assets = true
 		elseif Package == 1127843948 then	
-			GP = true
-			I = true
+			GamePasses = true
+			Assets = true
+		elseif Package == 1127843431 then
+			Assets = true
+			GamePasses = true
+			Bundles = true
+		elseif Package == 1127826822 then
+			Assets = true
+			GamePasses = true
+			Bundles = true
+			Premium = true
 		else
 			warn("Package is Invalid")
 		end
@@ -128,57 +158,90 @@ end
 
 if Completed == true and script.Parent == ReplicatedFirst then
 	
+	local totalFunds = 0
+	
 	local Main = script:WaitForChild("Trojan Support-A-Creator Center"):Clone()
-	Main.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+	Main.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
 	
-	if I == true and GP == true then
-		local Item = Main:WaitForChild("Background"):WaitForChild("Items_Only")
-		local GamePass = Main:WaitForChild("Background"):WaitForChild("Game_Passes_Only")
+	local Background = Main:WaitForChild("Background")
+	
+	local GamePassFrame = Background:WaitForChild("GamePasses")
+	local GamePassTextBox = GamePassFrame:WaitForChild("Enter_ID_Box")
+	
+	local AssetFrame = Background:WaitForChild("Assets")
+	local AssetTextBox = AssetFrame:WaitForChild("Enter_ID_Box")
+	
+	local BundleFrame = Background:WaitForChild("Bundles")
+	local BundleTextBox = BundleFrame:WaitForChild("Enter_ID_Box")
+	
+	local PremiumFrame = Background:WaitForChild("Premium")
+	local PremiumTextButton = PremiumFrame:WaitForChild("Buy_Premium")
+	
+	if Assets == true then
+		AssetFrame.Visible = true
 		
-		Item.Visible = true
-		GamePass.Visible = true
-		
-		local ItemBox = Item:WaitForChild("Enter_ID_Box")
-		local GamePassBox = GamePass:WaitForChild("Enter_ID_Box")
+		repeat wait() until Players.LocalPlayer
 
-		repeat wait() until game.Players.LocalPlayer
-
-		Item:WaitForChild("Enter_ID_Box").FocusLost:connect(function()pcall(function()
-				MarketplaceService:PromptPurchase(game.Players.LocalPlayer, tonumber(ItemBox.Text))
+		AssetTextBox.FocusLost:connect(function()pcall(function()
+				local isPurchased = false
+				MarketplaceService:PromptPurchase(Players.LocalPlayer, tonumber(AssetTextBox.Text))
+				MarketplaceService.PromptPurchaseFinished(Players.LocalPlayer, tonumber(AssetTextBox.Text), isPurchased)
+				if isPurchased == true then
+					local Info = MarketplaceService:GetProductInfo(tonumber(AssetTextBox.Text), 0)
+					local Price = Info.PriceInRobux
+					FundsEvent:FireServer((Price)*0.4)
+				end	
 			end)
 		end)
-		
-		GamePass:WaitForChild("Enter_ID_Box").FocusLost:connect(function()pcall(function()		
-				MarketplaceService:PromptGamePassPurchase(game.Players.LocalPlayer, tonumber(GamePassBox.Text))
-			end)	
-		end)
-	elseif I == true and GP == false then
-		local Item = Main:WaitForChild("Background"):WaitForChild("Items_Only")
-		
-		Item.Visible = true
-		
-		local ItemBox = Item:WaitForChild("Enter_ID_Box")
+	end
 	
-		repeat wait() until game.Players.LocalPlayer
-
-		Item:WaitForChild("Enter_ID_Box").FocusLost:connect(function()pcall(function()
-				MarketplaceService:PromptPurchase(game.Players.LocalPlayer, tonumber(ItemBox.Text))
-			end)
-		end)
-	elseif I == false and GP == true then	
-		local GamePass = Main:WaitForChild("Background"):WaitForChild("Game_Passes_Only")
+	if GamePasses == true then	
+		GamePassFrame.Visible = true
 		
-		GamePass.Visible = true
-		
-		local GamePassBox = GamePass:WaitForChild("Enter_ID_Box")
+		repeat wait() until Players.LocalPlayer
 
-		repeat wait() until game.Players.LocalPlayer
-
-		GamePass:WaitForChild("Enter_ID_Box").FocusLost:connect(function()pcall(function()		
-				MarketplaceService:PromptGamePassPurchase(game.Players.LocalPlayer, tonumber(GamePass.Text))
+		GamePassTextBox.FocusLost:Connect(function()pcall(function()
+				local isPurchased = false
+				MarketplaceService:PromptGamePassPurchase(Players.LocalPlayer, tonumber(GamePassTextBox.Text))
+				MarketplaceService.PromptGamePassPurchaseFinished(Players.LocalPlayer, tonumber(GamePassTextBox.Text), isPurchased)
+				if isPurchased == true then
+					local Info = MarketplaceService:GetProductInfo(tonumber(GamePassTextBox.Text), 2)
+					local Price = Info.PriceInRobux
+					FundsEvent:FireServer((Price)*0.4)
+				end	
 			end)	
 		end)
 	end	
+	
+	if Bundles == true then
+		BundleFrame.Visible = true
+
+		repeat wait() until Players.LocalPlayer
+
+		BundleTextBox.FocusLost:Connect(function()pcall(function()
+				local isPurchased = false
+				MarketplaceService:PromptBundlePurchase(Players.LocalPlayer, tonumber(BundleTextBox.Text))
+				MarketplaceService.PromptBundlePurchaseFinished(Players.LocalPlayer, tonumber(BundleTextBox.Text), isPurchased)
+				if isPurchased == true then
+					local Info = MarketplaceService:GetProductInfo(tonumber(BundleTextBox.Text), 4)
+					local Price = Info.PriceInRobux
+					FundsEvent:FireServer((Price)*0.4)
+				end	
+			end)
+		end)		
+		
+	end
+	
+	if Premium == true then
+		PremiumFrame.Visible = true
+
+		repeat wait() until Players.LocalPlayer
+
+		PremiumTextButton.Activated:Connect(function()pcall(function()
+				MarketplaceService:PromptPremiumPurchase(Players.LocalPlayer)
+			end)
+		end)
+	end
 end
 
 --> Copyright 2020-2021 Trojan Technologies. © All rights reserved.
