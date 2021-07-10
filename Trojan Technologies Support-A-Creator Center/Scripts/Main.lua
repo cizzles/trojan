@@ -165,7 +165,7 @@ if Completed == true and script.Parent == ReplicatedFirst then
 	
 	local Background = Main:WaitForChild("Background")
 	
-	local GamePassFrame = Background:WaitForChild("GamePasses")
+	local GamePassFrame = Background:WaitForChild("Game_Passes")
 	local GamePassTextBox = GamePassFrame:WaitForChild("Enter_ID_Box")
 	
 	local AssetFrame = Background:WaitForChild("Assets")
